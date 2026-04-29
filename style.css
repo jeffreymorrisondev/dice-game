@@ -1,0 +1,267 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #1a1a2e;
+  background: #edeae3;
+  padding: 2.5rem 1.5rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #1a1a2e;
+}
+
+header p {
+  color: #6b6b80;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.sheet-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+  max-width: 75rem;
+  margin: 0 auto;
+}
+
+.sheet-grid section {
+  flex: 1 1 20rem;
+  min-width: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f7f5f0;
+}
+
+caption {
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.65rem 0.85rem;
+  background: #1a1a2e;
+  color: #e8e4d8;
+}
+
+th {
+  text-align: left;
+}
+
+thead th {
+  background: #2d2d4a;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a8a8c0;
+  padding: 0.4rem 0.85rem;
+}
+
+
+tbody tr {
+  border-bottom: 1px solid #dedad2;
+}
+
+tbody tr:nth-child(even) {
+  background: #f0ece4;
+}
+
+tbody th,
+tbody td {
+  padding: 0.5rem 0.85rem;
+  vertical-align: middle;
+}
+
+tbody th {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+tbody td:nth-child(2) {
+  color: #5a5a70;
+  font-size: 0.875rem;
+}
+
+tbody td:last-child {
+  width: 5rem;
+}
+
+tfoot tr {
+  border-top: 1px solid #c8c4ba;
+}
+
+tfoot th,
+tfoot td {
+  padding: 0.5rem 0.85rem;
+  font-weight: 600;
+}
+
+
+.row-subtotal,
+.row-bonus {
+  background: #ece8e0;
+}
+
+.row-subtotal th,
+.row-subtotal td,
+.row-bonus th,
+.row-bonus td {
+  font-weight: 400;
+  color: #5a5a70;
+  font-size: 0.875rem;
+}
+
+.row-total {
+  background: #e4e0d6;
+}
+
+
+/* ── Preferences ── */
+
+.preferences {
+  max-width: 75rem;
+  margin: 0 auto 1.5rem;
+  border: 1px solid #c8c4ba;
+  border-radius: 6px;
+  background: #f0ece4;
+}
+
+.preferences summary {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #5a5a70;
+  cursor: pointer;
+  user-select: none;
+}
+
+.preferences-body {
+  padding: 0.5rem 0.85rem 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+}
+
+.preferences-body label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+
+.note {
+  color: #8888a0;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.pts {
+  font-weight: 700;
+}
+
+label {
+  cursor: pointer;
+}
+
+input[type="number"] {
+  width: 4.5rem;
+  border: 1px solid #c0bbb0;
+  border-radius: 3px;
+  padding: 0.2rem 0.4rem;
+  font-size: inherit;
+  font-family: inherit;
+  background: #fff;
+  color: #1a1a2e;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+output {
+  display: inline-block;
+  width: 4.5rem;
+  padding: 0.2rem 0.4rem;
+  font-size: inherit;
+  font-family: inherit;
+  text-align: right;
+}
+
+input[type="number"]:focus {
+  outline: 2px solid #4a5a9a;
+  outline-offset: 1px;
+  border-color: #4a5a9a;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.grand-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 75rem;
+  margin: 2rem auto 0;
+  padding: 0.75rem 1rem;
+  background: #1a1a2e;
+  color: #e8e4d8;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.grand-total output {
+  color: #e8e4d8;
+}
+
+.new-game-btn {
+  background: transparent;
+  border: 1px solid #a8a8c0;
+  border-radius: 3px;
+  color: #e8e4d8;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+.new-game-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.new-game-btn:focus {
+  outline: 2px solid #4a5a9a;
+  outline-offset: 2px;
+}
