@@ -23,8 +23,9 @@
   </head>
   <body>
     <header>
-      <h1>YAHTZEE</h1>
+      <h1>Dice Game</h1>
       <p>Score Sheet</p>
+      <p><small>Inspired by Yahtzee</small></p>
     </header>
 
     <main>
@@ -177,10 +178,10 @@
                       end
                       if hasAny
                         set my value to total
-                        send upper:subtotal(value: total) to <[yz-upper-bonus]/>
                       else
                         set my value to '—'
                       end
+                      send upper:subtotal(value: total, hasAny: hasAny) to <[yz-upper-bonus]/>
                     end
                     on game:reset set my value to '—'
                     "
@@ -199,8 +200,8 @@
                     yz-upper-bonus
                     for="aces twos threes fours fives sixes"
                     _="
-                    on upper:subtotal(value)
-                      if value >= 63
+                    on upper:subtotal(value, hasAny)
+                      if hasAny and value >= 63
                         set my value to 35
                       else
                         set my value to '—'
