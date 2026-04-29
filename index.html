@@ -21,7 +21,32 @@
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="icon" href="/favicon.ico" />
   </head>
-  <body>
+  <body
+    _="
+    init
+      set saved to window.localStorage.getItem('yahtzee-game')
+      if saved
+        set blob to JSON.parse(saved)
+        for input in <[yz-item]/>
+          set val to blob[input.id]
+          if val then set input.value to val end
+        end
+        send change to <[yz-upper]/>
+        send change to <[yz-lower]/>
+      end
+    end
+    on change from <[yz-item]/>
+      set scores to {}
+      for input in <[yz-item]/>
+        if input.value is not '' then set scores[input.id] to input.value end
+      end
+      call window.localStorage.setItem('yahtzee-game', JSON.stringify(scores))
+    end
+    on game:reset
+      call window.localStorage.removeItem('yahtzee-game')
+    end
+    "
+  >
     <header>
       <h1>Dice Game</h1>
       <p>Score Sheet</p>
