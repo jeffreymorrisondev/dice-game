@@ -461,7 +461,36 @@
       <div class="grand-total">
         <div>
           <label for="grand-total">Grand Total</label>
-          <output id="grand-total" name="grand-total" yz-grandtotal>—</output>
+          <output
+                    id="grand-total"
+                    name="grand-total"
+                    yz-grandtotal
+                    for="upper-total lower-total"
+                    _="
+                    on change from <[yz-item]/>
+                      set allFilled to true
+                      set upperTotal to 0
+                      set lowerTotal to 0
+                      for input in <[yz-upper]/>
+                        if input.value is '' then set allFilled to false end
+                        set upperTotal to upperTotal + (input.value as Int or 0)
+                      end
+                      for input in <[yz-lower]/>
+                        if input.value is '' then set allFilled to false end
+                        set lowerTotal to lowerTotal + (input.value as Int or 0)
+                      end
+                      if allFilled
+                        set bonus to 0
+                        if upperTotal >= 63 then set bonus to 35 end
+                        set my value to upperTotal + bonus + lowerTotal
+                      else
+                        set my value to '—'
+                      end
+                    end
+                    on game:reset set my value to '—'
+                    "
+                    >—</output
+                  >
         </div>
         <button
           type="button"
