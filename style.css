@@ -141,6 +141,17 @@ tfoot td {
   background: #e4e0d6;
 }
 
+.section-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.85rem;
+  background: #f0ece4;
+  border-top: 1px solid #c8c4ba;
+  font-size: 0.875rem;
+  color: #5a5a70;
+}
+
 
 /* ── Preferences ── */
 
@@ -193,7 +204,7 @@ label {
   cursor: pointer;
 }
 
-input[type="number"] {
+[yz-scoreable] {
   width: 4.5rem;
   border: 1px solid #c0bbb0;
   border-radius: 3px;
@@ -215,14 +226,23 @@ output {
   text-align: right;
 }
 
-input[type="number"]:focus {
+[yz-scoreable]:disabled {
+  background: transparent;
+  border-color: transparent;
+  color: #1a1a2e;
+  font-weight: 600;
+  cursor: default;
+  opacity: 1;
+}
+
+[yz-scoreable]:focus {
   outline: 2px solid #4a5a9a;
   outline-offset: 1px;
   border-color: #4a5a9a;
 }
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+[yz-scoreable]::-webkit-outer-spin-button,
+[yz-scoreable]::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
@@ -245,23 +265,41 @@ input[type="number"]::-webkit-inner-spin-button {
   color: #e8e4d8;
 }
 
-.new-game-btn {
-  background: transparent;
-  border: 1px solid #a8a8c0;
+button {
+  background: #1a1a2e;
+  border: 1px solid #1a1a2e;
   border-radius: 3px;
   color: #e8e4d8;
   padding: 0.3rem 0.75rem;
   font-size: 0.85rem;
   font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
-  letter-spacing: 0.04em;
+}
+
+button:hover {
+  background: #2d2d4a;
+  border-color: #2d2d4a;
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+button:focus {
+  outline: 2px solid #4a5a9a;
+  outline-offset: 2px;
+}
+
+.new-game-btn {
+  background: transparent;
+  border-color: #a8a8c0;
 }
 
 .new-game-btn:hover {
   background: rgba(255, 255, 255, 0.1);
-}
-
-.new-game-btn:focus {
-  outline: 2px solid #4a5a9a;
-  outline-offset: 2px;
+  border-color: #a8a8c0;
 }

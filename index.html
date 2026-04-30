@@ -21,32 +21,7 @@
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="icon" href="/favicon.ico" />
   </head>
-  <body
-    _="
-    init
-      set saved to window.localStorage.getItem('yahtzee-game')
-      if saved
-        set blob to JSON.parse(saved)
-        for input in <[yz-item]/>
-          set val to blob[input.id]
-          if val then set input.value to val end
-        end
-        send change to <[yz-upper]/>
-        send change to <[yz-lower]/>
-      end
-    end
-    on change from <[yz-item]/>
-      set scores to {}
-      for input in <[yz-item]/>
-        if input.value is not '' then set scores[input.id] to input.value end
-      end
-      call window.localStorage.setItem('yahtzee-game', JSON.stringify(scores))
-    end
-    on game:reset
-      call window.localStorage.removeItem('yahtzee-game')
-    end
-    "
-  >
+  <body>
     <header>
       <h1>Dice Game</h1>
       <p>Score Sheet</p>
@@ -56,405 +31,198 @@
     <main>
       <div class="sheet-grid">
         <section aria-labelledby="upper-caption">
-          <table>
-            <caption id="upper-caption">
-              Upper Section
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Category</th>
-                <th scope="col">How to Score</th>
-                <th scope="col" abbr="Score">Pts</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row"><label for="aces">Aces</label></th>
-                <td>Sum of all <span aria-hidden="true">⚀</span> 1s</td>
-                <td>
-                  <input
-                    type="number"
-                    id="aces"
-                    name="aces"
-                    yz-item
-                    yz-upper
-                    min="0"
-                    max="5"
-                    step="1"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="twos">Twos</label></th>
-                <td>Sum of all <span aria-hidden="true">⚁</span> 2s</td>
-                <td>
-                  <input
-                    type="number"
-                    id="twos"
-                    name="twos"
-                    yz-item
-                    yz-upper
-                    min="0"
-                    max="10"
-                    step="2"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="threes">Threes</label></th>
-                <td>Sum of all <span aria-hidden="true">⚂</span> 3s</td>
-                <td>
-                  <input
-                    type="number"
-                    id="threes"
-                    name="threes"
-                    yz-item
-                    yz-upper
-                    min="0"
-                    max="15"
-                    step="3"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="fours">Fours</label></th>
-                <td>Sum of all <span aria-hidden="true">⚃</span> 4s</td>
-                <td>
-                  <input
-                    type="number"
-                    id="fours"
-                    name="fours"
-                    yz-item
-                    yz-upper
-                    min="0"
-                    max="20"
-                    step="4"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="fives">Fives</label></th>
-                <td>Sum of all <span aria-hidden="true">⚄</span> 5s</td>
-                <td>
-                  <input
-                    type="number"
-                    id="fives"
-                    name="fives"
-                    yz-item
-                    yz-upper
-                    min="0"
-                    max="25"
-                    step="5"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="sixes">Sixes</label></th>
-                <td>Sum of all <span aria-hidden="true">⚅</span> 6s</td>
-                <td>
-                  <input
-                    type="number"
-                    id="sixes"
-                    name="sixes"
-                    yz-item
-                    yz-upper
-                    min="0"
-                    max="30"
-                    step="6"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr class="row-subtotal">
-                <th scope="row" colspan="2">
-                  <label for="upper-subtotal">Subtotal</label>
-                </th>
-                <td>
-                  <output
-                    id="upper-subtotal"
-                    yz-subtotal
-                    for="aces twos threes fours fives sixes"
-                    _="
-                    on change from <[yz-upper]/>
-                      set total to 0
-                      set hasAny to false
-                      for input in <[yz-upper]/>
-                        if input.value != '' then set hasAny to true
-                        set total to total + (input.value as Int or 0)
-                      end
-                      if hasAny
-                        set my value to total
-                      else
-                        set my value to '—'
-                      end
-                      send upper:subtotal(value: total, hasAny: hasAny) to <[yz-upper-bonus]/>
-                    end
-                    on game:reset set my value to '—'
-                    "
-                    >—</output
-                  >
-                </td>
-              </tr>
-              <tr class="row-bonus">
-                <th scope="row" colspan="2">
-                  <label for="upper-bonus">Bonus</label
-                  ><span class="note"> ≥ 63 → +35</span>
-                </th>
-                <td>
-                  <output
-                    id="upper-bonus"
-                    yz-upper-bonus
-                    for="aces twos threes fours fives sixes"
-                    _="
-                    on upper:subtotal(value, hasAny)
-                      if hasAny and value >= 63
-                        set my value to 35
-                      else
-                        set my value to '—'
-                      end
-                    end
-                    on game:reset set my value to '—'
-                    "
-                    >—</output
-                  >
-                </td>
-              </tr>
-              <tr class="row-total">
-                <th scope="row" colspan="2">
-                  <label for="upper-total">Upper Total</label>
-                </th>
-                <td>
-                  <output
-                    id="upper-total"
-                    for="aces twos threes fours fives sixes upper-bonus"
-                    _="on game:reset set my value to '—'"
-                    >—</output
-                  >
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </section>
-
-        <section aria-labelledby="lower-caption" data-cols="2">
-          <table>
-            <caption id="lower-caption">
-              Lower Section
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Category</th>
-                <th scope="col">How to Score</th>
-                <th scope="col" abbr="Score">Pts</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row"><label for="three-kind">3 of a Kind</label></th>
-                <td>Sum all dice</td>
-                <td>
-                  <input
-                    type="number"
-                    id="three-kind"
-                    name="three-kind"
-                    yz-item
-                    yz-lower
-                    min="0"
-                    max="30"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="four-kind">4 of a Kind</label></th>
-                <td>Sum all dice</td>
-                <td>
-                  <input
-                    type="number"
-                    id="four-kind"
-                    name="four-kind"
-                    yz-item
-                    yz-lower
-                    min="0"
-                    max="30"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="full-house">Full House</label></th>
-                <td>Score <span class="pts">25</span></td>
-                <td>
-                  <input
-                    type="number"
-                    id="full-house"
-                    name="full-house"
-                    yz-item
-                    yz-lower
-                    min="0"
-                    max="25"
-                    step="25"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  <label for="sm-straight">Sm. Straight</label>
-                </th>
-                <td>Score <span class="pts">30</span></td>
-                <td>
-                  <input
-                    type="number"
-                    id="sm-straight"
-                    name="sm-straight"
-                    yz-item
-                    yz-lower
-                    min="0"
-                    max="30"
-                    step="30"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  <label for="lg-straight">Lg. Straight</label>
-                </th>
-                <td>Score <span class="pts">40</span></td>
-                <td>
-                  <input
-                    type="number"
-                    id="lg-straight"
-                    name="lg-straight"
-                    yz-item
-                    yz-lower
-                    min="0"
-                    max="40"
-                    step="40"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="yahtzee">YAHTZEE</label></th>
-                <td>Score <span class="pts">50</span></td>
-                <td>
-                  <input
-                    type="number"
-                    id="yahtzee"
-                    name="yahtzee"
-                    yz-item
-                    yz-lower
-                    min="0"
-                    max="50"
-                    step="50"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row"><label for="chance">Chance</label></th>
-                <td>Sum all dice</td>
-                <td>
-                  <input
-                    type="number"
-                    id="chance"
-                    name="chance"
-                    yz-item
-                    yz-lower
-                    min="0"
-                    max="30"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  <label for="yahtzee-bonus">YAHTZEE Bonus</label>
-                </th>
-                <td><span class="pts">100</span> per extra</td>
-                <td>
-                  <input
-                    type="number"
-                    id="yahtzee-bonus"
-                    name="yahtzee-bonus"
-                    yz-item
-                    yz-lower
-                    min="0"
-                    step="100"
-                    inputmode="numeric"
-                    placeholder="—"
-                    _="on game:reset set my value to ''"
-                  />
-                </td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr class="row-total">
-                <th scope="row" colspan="2">
-                  <label for="lower-total">Lower Total</label>
-                </th>
-                <td>
-                  <output
-                    id="lower-total"
-                    yz-subtotal
-                    for="three-kind four-kind full-house sm-straight lg-straight yahtzee chance yahtzee-bonus"
-                    _="
-                    on change from <[yz-lower]/>
-                      set total to 0
-                      set hasAny to false
-                      for input in <[yz-lower]/>
-                        if input.value != '' then set hasAny to true
-                        set total to total + (input.value as Int or 0)
-                      end
-                      if hasAny
-                        set my value to total
-                      else
-                        set my value to '—'
-                      end
-                    end
-                    on game:reset set my value to '—'
-                    "
-                    >—</output
-                  >
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+          <form
+            id="upper-form"
+            _="
+            on yz:submit
+              for input in <[yz-scoreable]/> in me
+                set input.disabled to true
+              end
+              set @yz-submitted to 'true'
+              send yz:submit to <#upper-total/>
+              send yz:submit to <#grand-total/>
+            end
+            on yz:unsubmit
+              remove @yz-submitted from me
+              send edit to <#upper-total/>
+              for input in <[yz-scoreable]/> in me
+                set input.disabled to false
+              end
+            end
+            on game:reset
+              my.reset()
+              remove @yz-submitted from me
+              for input in <[yz-scoreable]/> in me
+                set input.disabled to false
+              end
+            end
+            "
+          >
+            <table>
+              <caption id="upper-caption">
+                Upper Section
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">How to Score</th>
+                  <th scope="col" abbr="Score">Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><label for="aces">Aces</label></th>
+                  <td>Sum of all <span aria-hidden="true">⚀</span> 1s</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="aces"
+                      name="aces"
+                      yz-scoreable
+                      min="0"
+                      max="5"
+                      step="1"
+                      inputmode="numeric"
+                      placeholder="—"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><label for="twos">Twos</label></th>
+                  <td>Sum of all <span aria-hidden="true">⚁</span> 2s</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="twos"
+                      name="twos"
+                      yz-scoreable
+                      min="0"
+                      max="10"
+                      step="2"
+                      inputmode="numeric"
+                      placeholder="—"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><label for="threes">Threes</label></th>
+                  <td>Sum of all <span aria-hidden="true">⚂</span> 3s</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="threes"
+                      name="threes"
+                      yz-scoreable
+                      min="0"
+                      max="15"
+                      step="3"
+                      inputmode="numeric"
+                      placeholder="—"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><label for="fours">Fours</label></th>
+                  <td>Sum of all <span aria-hidden="true">⚃</span> 4s</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="fours"
+                      name="fours"
+                      yz-scoreable
+                      min="0"
+                      max="20"
+                      step="4"
+                      inputmode="numeric"
+                      placeholder="—"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><label for="fives">Fives</label></th>
+                  <td>Sum of all <span aria-hidden="true">⚄</span> 5s</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="fives"
+                      name="fives"
+                      yz-scoreable
+                      min="0"
+                      max="25"
+                      step="5"
+                      inputmode="numeric"
+                      placeholder="—"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><label for="sixes">Sixes</label></th>
+                  <td>Sum of all <span aria-hidden="true">⚅</span> 6s</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="sixes"
+                      name="sixes"
+                      yz-scoreable
+                      min="0"
+                      max="30"
+                      step="6"
+                      inputmode="numeric"
+                      placeholder="—"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3">
+                    <button
+                      type="button"
+                      _="
+                      on click send yz:submit to <#upper-form/>
+                      on yz:submit from <#upper-form/> add @disabled to me
+                      on yz:unsubmit from <#upper-form/> remove @disabled from me
+                      on game:reset remove @disabled from me
+                      "
+                    >
+                      Finalize Upper
+                    </button>
+                    <button
+                      disabled
+                      type="button"
+                      _="
+                      on click send yz:unsubmit to <#upper-form/>
+                      on yz:submit from <#upper-form/> remove @disabled from me
+                      on yz:unsubmit from <#upper-form/> add @disabled to me
+                      on game:reset add @disabled to me
+                      "
+                    >
+                      Edit Upper
+                    </button>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </form>
+          <div class="section-total">
+            <span>Upper Total</span>
+            <output
+              id="upper-total"
+              for="aces twos threes fours fives sixes"
+              _="
+              on yz:submit
+                set total to 0
+                for input in <[yz-scoreable]/> in <#upper-form/>
+                  set total to total + (input.value as Int or 0)
+                end
+                set my value to total
+              end
+              on edit set my value to '—'
+              on game:reset set my value to '—'
+              "
+              >—</output
+            >
+          </div>
         </section>
       </div>
 
@@ -462,41 +230,29 @@
         <div>
           <label for="grand-total">Grand Total</label>
           <output
-                    id="grand-total"
-                    name="grand-total"
-                    yz-grandtotal
-                    for="upper-total lower-total"
-                    _="
-                    on change from <[yz-item]/>
-                      set allFilled to true
-                      set upperTotal to 0
-                      set lowerTotal to 0
-                      for input in <[yz-upper]/>
-                        if input.value is '' then set allFilled to false end
-                        set upperTotal to upperTotal + (input.value as Int or 0)
-                      end
-                      for input in <[yz-lower]/>
-                        if input.value is '' then set allFilled to false end
-                        set lowerTotal to lowerTotal + (input.value as Int or 0)
-                      end
-                      if allFilled
-                        set bonus to 0
-                        if upperTotal >= 63 then set bonus to 35 end
-                        set my value to upperTotal + bonus + lowerTotal
-                      else
-                        set my value to '—'
-                      end
-                    end
-                    on game:reset set my value to '—'
-                    "
-                    >—</output
-                  >
+            id="grand-total"
+            for="upper-total"
+            _="
+            on yz:submit
+              set upperForm to first <#upper-form/>
+              if upperForm.matches('[yz-submitted]')
+                set total to 0
+                for input in <[yz-scoreable]/> in upperForm
+                  set total to total + (input.value as Int or 0)
+                end
+                set my value to total
+              end
+            end
+            on game:reset set my value to '—'
+            "
+            >—</output
+          >
         </div>
         <button
           type="button"
           class="new-game-btn"
           aria-label="Start a new game and clear all scores"
-          _="on click send game:reset to <[yz-item], output/>"
+          _="on click if confirm('Start a new game? All scores will be cleared.') send game:reset to <form, button, output/>"
         >
           New Game
         </button>
