@@ -35,16 +35,15 @@
             id="upper-form"
             _="
             on yz:submit
+              set total to 0
               for input in <[yz-scoreable]/> in me
+                set coerced to (input.value or 0) as Int
+                set total to total + coerced
                 set out to the next <output/> from input
-                set out.value to (input.value or 0) as Int
+                set out.value to coerced
                 add @hidden to input
                 remove @hidden from out
               end
-              set total to 0
-              for input in <[yz-scoreable]/> in me
-                set total to total + (input.value as Int or 0)
-                end
               send yz:submit(total: total) to <#upper-total/>
               send yz:submit(total: total) to <#grand-total/>
             end
@@ -201,8 +200,7 @@
                     <button
                       type="button"
                       _="
-                      on click send yz:submit to <#upper-form/>
-                      on yz:submit from <#upper-form/> add @disabled to me
+                      on click send yz:submit to <#upper-form/> add @disabled to me
                       on yz:reopen from <#upper-form/> remove @disabled from me
                       on yz:cancel from <#upper-form/> add @disabled to me
                       on yz:reset remove @disabled from me
@@ -214,9 +212,8 @@
                       disabled
                       type="button"
                       _="
-                      on click send yz:reopen to <#upper-form/>
+                      on click send yz:reopen to <#upper-form/> add @disabled to me
                       on yz:submit from <#upper-form/> remove @disabled from me
-                      on yz:reopen from <#upper-form/> add @disabled to me
                       on yz:cancel from <#upper-form/> remove @disabled from me
                       on yz:reset add @hidden to me add @disabled to me
                       "
@@ -228,11 +225,10 @@
                       hidden
                       type="button"
                       _="
-                      on click send yz:cancel to <#upper-form/>
+                      on click send yz:cancel to <#upper-form/> add @disabled to me add @hidden to me
                       on yz:reopen from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:cancel from <#upper-form/> add @disabled to me add @hidden to me
                       on yz:submit from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reset add @disabled to me
+                      on yz:reset add @disabled to me add @hidden to me
                       "
                     >
                       Cancel
@@ -251,7 +247,6 @@
               on yz:submit(total)
                 set my value to total
               end
-              on edit set my value to '—'
               on yz:reset set my value to '—'
               "
               >—</output
