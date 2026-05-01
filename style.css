@@ -303,3 +303,7 @@ button:focus {
   background: rgba(255, 255, 255, 0.1);
   border-color: #a8a8c0;
 }
+
+.dice {
+  font-size: 1.3em;
+}
