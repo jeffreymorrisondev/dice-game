@@ -9,17 +9,17 @@
     />
     <meta name="author" content="Jeffrey Morrison" />
     <title>Dice Game — Score Sheet</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="static/style.css" />
     <script
       src="https://cdn.jsdelivr.net/npm/hyperscript.org@0.9.91/dist/_hyperscript.min.js"
       crossorigin="anonymous"
     ></script>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/assets/favicon.ico" />
   </head>
   <body>
     <header>
@@ -210,10 +210,11 @@
                     </button>
                     <button
                       disabled
+                      hidden
                       type="button"
                       _="
                       on click send yz:reopen to <#upper-form/> add @disabled to me
-                      on yz:submit from <#upper-form/> remove @disabled from me
+                      on yz:submit from <#upper-form/> remove @disabled from me remove @hidden from me
                       on yz:cancel from <#upper-form/> remove @disabled from me
                       on yz:reset add @hidden to me add @disabled to me
                       "
