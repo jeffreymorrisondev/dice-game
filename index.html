@@ -36,24 +36,40 @@
             _="
             on yz:submit
               for input in <[yz-scoreable]/> in me
-                set input.disabled to true
+                set out to the next <output/> from input
+                set out.value to (input.value or 0) as Int
+                add @hidden to input
+                remove @hidden from out
               end
-              set @yz-submitted to 'true'
-              send yz:submit to <#upper-total/>
-              send yz:submit to <#grand-total/>
-            end
-            on yz:unsubmit
-              remove @yz-submitted from me
-              send edit to <#upper-total/>
+              set total to 0
               for input in <[yz-scoreable]/> in me
-                set input.disabled to false
+                set total to total + (input.value as Int or 0)
+                end
+              send yz:submit(total: total) to <#upper-total/>
+              send yz:submit(total: total) to <#grand-total/>
+            end
+            on yz:reopen
+              for input in <[yz-scoreable]/> in me
+                set out to the next <output/> from input
+                set input.value to (out.value or 0) as Int
+                remove @hidden from input
+                add @hidden to out
               end
             end
-            on game:reset
+            on yz:cancel
+              for input in <[yz-scoreable]/> in me
+                set out to the next <output/> from input
+                add @hidden to input
+                remove @hidden from out
+              end
+            end
+            on yz:reset
               my.reset()
-              remove @yz-submitted from me
               for input in <[yz-scoreable]/> in me
-                set input.disabled to false
+                set out to the next <output/> from input
+                remove @hidden from input
+                add @hidden to out
+                set out.value to ''
               end
             end
             "
@@ -85,6 +101,7 @@
                       inputmode="numeric"
                       placeholder="—"
                     />
+                    <output for="aces" hidden>—</output>
                   </td>
                 </tr>
                 <tr>
@@ -102,6 +119,7 @@
                       inputmode="numeric"
                       placeholder="—"
                     />
+                    <output for="twos" hidden>—</output>
                   </td>
                 </tr>
                 <tr>
@@ -119,6 +137,7 @@
                       inputmode="numeric"
                       placeholder="—"
                     />
+                    <output for="threes" hidden>—</output>
                   </td>
                 </tr>
                 <tr>
@@ -136,6 +155,7 @@
                       inputmode="numeric"
                       placeholder="—"
                     />
+                    <output for="fours" hidden>—</output>
                   </td>
                 </tr>
                 <tr>
@@ -153,6 +173,7 @@
                       inputmode="numeric"
                       placeholder="—"
                     />
+                    <output for="fives" hidden>—</output>
                   </td>
                 </tr>
                 <tr>
@@ -170,6 +191,7 @@
                       inputmode="numeric"
                       placeholder="—"
                     />
+                    <output for="sixes" hidden>—</output>
                   </td>
                 </tr>
               </tbody>
@@ -181,23 +203,39 @@
                       _="
                       on click send yz:submit to <#upper-form/>
                       on yz:submit from <#upper-form/> add @disabled to me
-                      on yz:unsubmit from <#upper-form/> remove @disabled from me
-                      on game:reset remove @disabled from me
+                      on yz:reopen from <#upper-form/> remove @disabled from me
+                      on yz:cancel from <#upper-form/> add @disabled to me
+                      on yz:reset remove @disabled from me
                       "
                     >
-                      Finalize Upper
+                      Close Upper
                     </button>
                     <button
                       disabled
                       type="button"
                       _="
-                      on click send yz:unsubmit to <#upper-form/>
+                      on click send yz:reopen to <#upper-form/>
                       on yz:submit from <#upper-form/> remove @disabled from me
-                      on yz:unsubmit from <#upper-form/> add @disabled to me
-                      on game:reset add @disabled to me
+                      on yz:reopen from <#upper-form/> add @disabled to me
+                      on yz:cancel from <#upper-form/> remove @disabled from me
+                      on yz:reset add @hidden to me add @disabled to me
                       "
                     >
-                      Edit Upper
+                      Reopen Upper
+                    </button>
+                    <button
+                      disabled
+                      hidden
+                      type="button"
+                      _="
+                      on click send yz:cancel to <#upper-form/>
+                      on yz:reopen from <#upper-form/> remove @disabled from me remove @hidden from me
+                      on yz:cancel from <#upper-form/> add @disabled to me add @hidden to me
+                      on yz:submit from <#upper-form/> add @disabled to me add @hidden to me
+                      on yz:reset add @disabled to me
+                      "
+                    >
+                      Cancel
                     </button>
                   </td>
                 </tr>
@@ -210,15 +248,11 @@
               id="upper-total"
               for="aces twos threes fours fives sixes"
               _="
-              on yz:submit
-                set total to 0
-                for input in <[yz-scoreable]/> in <#upper-form/>
-                  set total to total + (input.value as Int or 0)
-                end
+              on yz:submit(total)
                 set my value to total
               end
               on edit set my value to '—'
-              on game:reset set my value to '—'
+              on yz:reset set my value to '—'
               "
               >—</output
             >
@@ -233,17 +267,10 @@
             id="grand-total"
             for="upper-total"
             _="
-            on yz:submit
-              set upperForm to first <#upper-form/>
-              if upperForm.matches('[yz-submitted]')
-                set total to 0
-                for input in <[yz-scoreable]/> in upperForm
-                  set total to total + (input.value as Int or 0)
-                end
-                set my value to total
-              end
+            on yz:submit(total)
+              set my value to total
             end
-            on game:reset set my value to '—'
+            on yz:reset set my value to '—'
             "
             >—</output
           >
@@ -252,7 +279,7 @@
           type="button"
           class="new-game-btn"
           aria-label="Start a new game and clear all scores"
-          _="on click if confirm('Start a new game? All scores will be cleared.') send game:reset to <form, button, output/>"
+          _="on click if confirm('Start a new game? All scores will be cleared.') send yz:reset to <form, button, output/>"
         >
           New Game
         </button>

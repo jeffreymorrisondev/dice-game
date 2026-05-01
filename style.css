@@ -217,7 +217,7 @@ label {
   -moz-appearance: textfield;
 }
 
-output {
+output:not([hidden]) {
   display: inline-block;
   width: 4.5rem;
   padding: 0.2rem 0.4rem;
