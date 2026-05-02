@@ -15,9 +15,23 @@
       crossorigin="anonymous"
     ></script>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/favicon-16x16.png"
+    />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="icon" href="/assets/favicon.ico" />
   </head>
@@ -35,17 +49,32 @@
             id="upper-form"
             _="
             on yz:submit
-              set total to 0
               for input in <[yz-scoreable]/> in me
-                set coerced to (input.value or 0) as Int
-                set total to total + coerced
+                set input.value to ((its value or 0) as Int)
+              end
+              if not my.reportValidity() exit end
+              set subtotal to 0
+              for input in <[yz-scoreable]/> in me
+                set val to input.value as Int
+                set subtotal to subtotal + val
                 set out to the next <output/> from input
-                set out.value to coerced
+                set out.value to val
                 add @hidden to input
                 remove @hidden from out
               end
-              send yz:submit(total: total) to <#upper-total/>
-              send yz:submit(total: total) to <#grand-total/>
+              set bonusOut to <output[for='upper-bonus']/> in me
+              if subtotal >= 63
+                set bonusOut.value to '✓'
+                add .earned to bonusOut
+                send yz:submit(total: subtotal) to <#upper-total/>
+                send yz:submit(total: subtotal + 35) to <#grand-total/>
+              else
+                set bonusOut.value to '—'
+                remove .earned from bonusOut
+                send yz:submit(total: subtotal) to <#upper-total/>
+                send yz:submit(total: subtotal) to <#grand-total/>
+              end
+              send yz:submitted to me
             end
             on yz:reopen
               for input in <[yz-scoreable]/> in me
@@ -54,6 +83,7 @@
                 remove @hidden from input
                 add @hidden to out
               end
+              send yz:reopened to me
             end
             on yz:cancel
               for input in <[yz-scoreable]/> in me
@@ -61,8 +91,9 @@
                 add @hidden to input
                 remove @hidden from out
               end
+              send yz:cancelled to me
             end
-            on yz:reset
+            on yz:clear
               my.reset()
               for input in <[yz-scoreable]/> in me
                 set out to the next <output/> from input
@@ -70,6 +101,10 @@
                 add @hidden to out
                 set out.value to ''
               end
+              set bonusOut to <output[for='upper-bonus']/> in me
+              set bonusOut.value to '—'
+              remove .earned from bonusOut
+              send yz:cleared to me
             end
             "
           >
@@ -87,13 +122,16 @@
               <tbody>
                 <tr>
                   <th scope="row"><label for="aces">Aces</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚀</span> 1s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚀</span> 1s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="aces"
                       name="aces"
                       yz-scoreable
+                      required
                       min="0"
                       max="5"
                       step="1"
@@ -105,13 +143,16 @@
                 </tr>
                 <tr>
                   <th scope="row"><label for="twos">Twos</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚁</span> 2s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚁</span> 2s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="twos"
                       name="twos"
                       yz-scoreable
+                      required
                       min="0"
                       max="10"
                       step="2"
@@ -123,13 +164,16 @@
                 </tr>
                 <tr>
                   <th scope="row"><label for="threes">Threes</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚂</span> 3s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚂</span> 3s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="threes"
                       name="threes"
                       yz-scoreable
+                      required
                       min="0"
                       max="15"
                       step="3"
@@ -141,13 +185,16 @@
                 </tr>
                 <tr>
                   <th scope="row"><label for="fours">Fours</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚃</span> 4s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚃</span> 4s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="fours"
                       name="fours"
                       yz-scoreable
+                      required
                       min="0"
                       max="20"
                       step="4"
@@ -159,13 +206,16 @@
                 </tr>
                 <tr>
                   <th scope="row"><label for="fives">Fives</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚄</span> 5s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚄</span> 5s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="fives"
                       name="fives"
                       yz-scoreable
+                      required
                       min="0"
                       max="25"
                       step="5"
@@ -177,13 +227,16 @@
                 </tr>
                 <tr>
                   <th scope="row"><label for="sixes">Sixes</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚅</span> 6s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚅</span> 6s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="sixes"
                       name="sixes"
                       yz-scoreable
+                      required
                       min="0"
                       max="30"
                       step="6"
@@ -193,6 +246,13 @@
                     <output for="sixes" hidden>—</output>
                   </td>
                 </tr>
+                <tr class="row-bonus">
+                  <th scope="row">Bonus</th>
+                  <td>+35 if upper score ≥ 63</td>
+                  <td>
+                    <output for="upper-bonus">—</output>
+                  </td>
+                </tr>
               </tbody>
               <tfoot>
                 <tr>
@@ -200,10 +260,11 @@
                     <button
                       type="button"
                       _="
-                      on click send yz:submit to <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reopen from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:cancel from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reset remove @disabled from me
+                      on click send yz:submit to <#upper-form/>
+                      on yz:submitted from <#upper-form/> add @disabled to me add @hidden to me
+                      on yz:reopened from <#upper-form/> remove @disabled from me remove @hidden from me
+                      on yz:cancelled from <#upper-form/> add @disabled to me add @hidden to me
+                      on yz:cleared from <#upper-form/> remove @disabled from me remove @hidden from me
                       "
                     >
                       Close Upper
@@ -213,10 +274,11 @@
                       hidden
                       type="button"
                       _="
-                      on click send yz:reopen to <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:submit from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:cancel from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:reset add @hidden to me add @disabled to me
+                      on click send yz:reopen to <#upper-form/>
+                      on yz:reopened from <#upper-form/> add @disabled to me add @hidden to me
+                      on yz:submitted from <#upper-form/> remove @disabled from me remove @hidden from me
+                      on yz:cancelled from <#upper-form/> remove @disabled from me remove @hidden from me
+                      on yz:cleared from <#upper-form/> add @hidden to me add @disabled to me
                       "
                     >
                       Reopen Upper
@@ -226,10 +288,11 @@
                       hidden
                       type="button"
                       _="
-                      on click send yz:cancel to <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reopen from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:submit from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reset add @disabled to me add @hidden to me
+                      on click send yz:cancel to <#upper-form/>
+                      on yz:cancelled from <#upper-form/> add @disabled to me add @hidden to me
+                      on yz:reopened from <#upper-form/> remove @disabled from me remove @hidden from me
+                      on yz:submitted from <#upper-form/> add @disabled to me add @hidden to me
+                      on yz:cleared from <#upper-form/> add @disabled to me add @hidden to me
                       "
                     >
                       Cancel
@@ -248,7 +311,7 @@
               on yz:submit(total)
                 set my value to total
               end
-              on yz:reset set my value to '—'
+              on yz:cleared from <#upper-form/> set my value to '—'
               "
               >—</output
             >
@@ -266,7 +329,7 @@
             on yz:submit(total)
               set my value to total
             end
-            on yz:reset set my value to '—'
+            on yz:cleared from <#upper-form/> set my value to '—'
             "
             >—</output
           >
@@ -275,7 +338,7 @@
           type="button"
           class="new-game-btn"
           aria-label="Start a new game and clear all scores"
-          _="on click if confirm('Start a new game? All scores will be cleared.') send yz:reset to <form, button, output/>"
+          _="on click if confirm('Start a new game? All scores will be cleared.') send yz:clear to <form/>"
         >
           New Game
         </button>

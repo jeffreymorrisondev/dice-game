@@ -137,6 +137,11 @@ tfoot td {
   font-size: 0.875rem;
 }
 
+output.earned {
+  color: #2d7a3a;
+  font-weight: 600;
+}
+
 .row-total {
   background: #e4e0d6;
 }
