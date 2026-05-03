@@ -48,6 +48,7 @@
           <form
             id="upper-form"
             _="
+            init set @yz-state to 'open' on me end
             on yz:submit
               for input in <[yz-scoreable]/> in me
                 set input.value to ((its value or 0) as Int)
@@ -63,18 +64,18 @@
                 remove @hidden from out
               end
               set bonusOut to <output[for='upper-bonus']/> in me
+              set bonus to 0
               if subtotal >= 63
                 set bonusOut.value to '✓'
                 add .earned to bonusOut
-                send yz:submit(total: subtotal) to <#upper-total/>
-                send yz:submit(total: subtotal + 35) to <#grand-total/>
+                set bonus to 35
               else
                 set bonusOut.value to '—'
                 remove .earned from bonusOut
-                send yz:submit(total: subtotal) to <#upper-total/>
-                send yz:submit(total: subtotal) to <#grand-total/>
               end
-              send yz:submitted to me
+              send yz:submit(total: subtotal) to <#upper-total/>
+              send yz:submit(total: subtotal + bonus) to <#grand-total/>
+              set @yz-state to 'closed' on me
             end
             on yz:reopen
               for input in <[yz-scoreable]/> in me
@@ -83,7 +84,7 @@
                 remove @hidden from input
                 add @hidden to out
               end
-              send yz:reopened to me
+              set @yz-state to 'editing' on me
             end
             on yz:cancel
               for input in <[yz-scoreable]/> in me
@@ -91,7 +92,7 @@
                 add @hidden to input
                 remove @hidden from out
               end
-              send yz:cancelled to me
+              set @yz-state to 'closed' on me
             end
             on yz:clear
               my.reset()
@@ -104,7 +105,7 @@
               set bonusOut to <output[for='upper-bonus']/> in me
               set bonusOut.value to '—'
               remove .earned from bonusOut
-              send yz:cleared to me
+              set @yz-state to 'open' on me
             end
             "
           >
@@ -259,13 +260,11 @@
                   <td colspan="3">
                     <button
                       type="button"
-                      _="
-                      on click send yz:submit to <#upper-form/>
-                      on yz:submitted from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reopened from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:cancelled from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:cleared from <#upper-form/> remove @disabled from me remove @hidden from me
-                      "
+                      yz-action="close"
+                      _="on click send yz:submit to closest <form/>
+                         bind @hidden to (#upper-form@yz-state is 'closed')
+                         bind @disabled to @hidden
+                         "
                     >
                       Close Upper
                     </button>
@@ -273,13 +272,11 @@
                       disabled
                       hidden
                       type="button"
-                      _="
-                      on click send yz:reopen to <#upper-form/>
-                      on yz:reopened from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:submitted from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:cancelled from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:cleared from <#upper-form/> add @hidden to me add @disabled to me
-                      "
+                      yz-action="reopen"
+                      _="on click send yz:reopen to closest <form/>
+                         bind @hidden to (#upper-form@yz-state is not 'closed')
+                         bind @disabled to @hidden
+                         "
                     >
                       Reopen Upper
                     </button>
@@ -287,13 +284,11 @@
                       disabled
                       hidden
                       type="button"
-                      _="
-                      on click send yz:cancel to <#upper-form/>
-                      on yz:cancelled from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reopened from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:submitted from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:cleared from <#upper-form/> add @disabled to me add @hidden to me
-                      "
+                      yz-action="cancel"
+                      _="on click send yz:cancel to closest <form/>
+                         bind @hidden to #upper-form@yz-state is not 'editing'
+                         bind @disabled to @hidden
+                         "
                     >
                       Cancel
                     </button>
@@ -311,7 +306,7 @@
               on yz:submit(total)
                 set my value to total
               end
-              on yz:cleared from <#upper-form/> set my value to '—'
+              on yz:clear from <#upper-form/> set my value to '—'
               "
               >—</output
             >
@@ -329,7 +324,7 @@
             on yz:submit(total)
               set my value to total
             end
-            on yz:cleared from <#upper-form/> set my value to '—'
+            on yz:clear from <#upper-form/> set my value to '—'
             "
             >—</output
           >
