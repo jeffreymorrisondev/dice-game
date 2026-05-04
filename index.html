@@ -95,8 +95,8 @@
               <caption
                 id="upper-caption"
                 _="
-                bind state to #upper-form@yz-state
-                  set my textContent to 'Upper Section (' + state + ')'
+                on mutation of @yz-state from #upper-form
+                  set my textContent to 'Upper Section (' + #upper-form@yz-state + ')'
                 end
                   "
               ></caption>
@@ -425,8 +425,8 @@
               <caption
                 id="lower-caption"
                 _="
-                bind state to #lower-form@yz-state
-                  set my textContent to 'Lower Section (' + state + ')'
+                on mutation of @yz-state from #lower-form
+                  set my textContent to 'Lower Section (' + #lower-form@yz-state + ')'
                 end
                   "
               ></caption>
