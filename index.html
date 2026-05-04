@@ -15,9 +15,23 @@
       crossorigin="anonymous"
     ></script>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/favicon-16x16.png"
+    />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="icon" href="/assets/favicon.ico" />
   </head>
@@ -34,49 +48,58 @@
           <form
             id="upper-form"
             _="
+            init set @yz-state to 'open' on me end
+
             on yz:submit
-              set total to 0
+            
               for input in <[yz-scoreable]/> in me
-                set coerced to (input.value or 0) as Int
-                set total to total + coerced
-                set out to the next <output/> from input
-                set out.value to coerced
-                add @hidden to input
-                remove @hidden from out
+                set input.value to ((its value or 0) as Int)
               end
-              send yz:submit(total: total) to <#upper-total/>
-              send yz:submit(total: total) to <#grand-total/>
+              if not my.reportValidity() exit end
+
+              set subtotal to 0
+              for input in <[yz-scoreable]/> in me
+                set val to input.value as Int
+                set subtotal to subtotal + val
+                set out to the next <output/> from input
+                set out.value to val
+              end
+              send yz:submit(subtotal: subtotal) to <#upper-subtotal/>
+              send yz:submit(subtotal: subtotal) to <#upper-bonus/>
+              send yz:submit(subtotal: subtotal) to <#upper-total/>
+              set @yz-state to 'closed' on me
             end
+
             on yz:reopen
               for input in <[yz-scoreable]/> in me
                 set out to the next <output/> from input
                 set input.value to (out.value or 0) as Int
-                remove @hidden from input
-                add @hidden to out
               end
+              set @yz-state to 'editing' on me
             end
             on yz:cancel
-              for input in <[yz-scoreable]/> in me
-                set out to the next <output/> from input
-                add @hidden to input
-                remove @hidden from out
-              end
+              set @yz-state to 'closed' on me
             end
-            on yz:reset
+
+            on yz:clear
               my.reset()
               for input in <[yz-scoreable]/> in me
                 set out to the next <output/> from input
-                remove @hidden from input
-                add @hidden to out
                 set out.value to ''
               end
+              set @yz-state to 'open' on me
             end
             "
           >
             <table>
-              <caption id="upper-caption">
-                Upper Section
-              </caption>
+              <caption
+                id="upper-caption"
+                _="
+                bind state to #upper-form@yz-state
+                  set my textContent to 'Upper Section (' + state + ')'
+                end
+                  "
+              ></caption>
               <thead>
                 <tr>
                   <th scope="col">Category</th>
@@ -87,110 +110,164 @@
               <tbody>
                 <tr>
                   <th scope="row"><label for="aces">Aces</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚀</span> 1s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚀</span> 1s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="aces"
                       name="aces"
                       yz-scoreable
+                      required
                       min="0"
                       max="5"
                       step="1"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="aces" hidden>—</output>
+                    <output
+                      for="aces"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
                   <th scope="row"><label for="twos">Twos</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚁</span> 2s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚁</span> 2s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="twos"
                       name="twos"
                       yz-scoreable
+                      required
                       min="0"
                       max="10"
                       step="2"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="twos" hidden>—</output>
+                    <output
+                      for="twos"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
                   <th scope="row"><label for="threes">Threes</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚂</span> 3s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚂</span> 3s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="threes"
                       name="threes"
                       yz-scoreable
+                      required
                       min="0"
                       max="15"
                       step="3"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="threes" hidden>—</output>
+                    <output
+                      for="threes"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
                   <th scope="row"><label for="fours">Fours</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚃</span> 4s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚃</span> 4s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="fours"
                       name="fours"
                       yz-scoreable
+                      required
                       min="0"
                       max="20"
                       step="4"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="fours" hidden>—</output>
+                    <output
+                      for="fours"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
                   <th scope="row"><label for="fives">Fives</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚄</span> 5s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚄</span> 5s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="fives"
                       name="fives"
                       yz-scoreable
+                      required
                       min="0"
                       max="25"
                       step="5"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="fives" hidden>—</output>
+                    <output
+                      for="fives"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
                   <th scope="row"><label for="sixes">Sixes</label></th>
-                  <td>Sum of all <span class="dice" aria-hidden="true">⚅</span> 6s</td>
+                  <td>
+                    Sum of all <span class="dice" aria-hidden="true">⚅</span> 6s
+                  </td>
                   <td>
                     <input
                       type="number"
                       id="sixes"
                       name="sixes"
                       yz-scoreable
+                      required
                       min="0"
                       max="30"
                       step="6"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="sixes" hidden>—</output>
+                    <output
+                      for="sixes"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
               </tbody>
@@ -199,38 +276,33 @@
                   <td colspan="3">
                     <button
                       type="button"
-                      _="
-                      on click send yz:submit to <#upper-form/> add @disabled to me
-                      on yz:reopen from <#upper-form/> remove @disabled from me
-                      on yz:cancel from <#upper-form/> add @disabled to me
-                      on yz:reset remove @disabled from me
-                      "
+                      yz-action="close"
+                      _="on click send yz:submit to closest <form/> end
+                         bind @hidden to (#upper-form@yz-state is 'closed')
+                         bind @disabled to (#upper-form@yz-state is 'closed')
+                         "
                     >
                       Close Upper
                     </button>
                     <button
-                      disabled
                       hidden
                       type="button"
-                      _="
-                      on click send yz:reopen to <#upper-form/> add @disabled to me
-                      on yz:submit from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:cancel from <#upper-form/> remove @disabled from me
-                      on yz:reset add @hidden to me add @disabled to me
-                      "
+                      yz-action="reopen"
+                      _="on click send yz:reopen to closest <form/> end
+                         bind @hidden to (#upper-form@yz-state is not 'closed')
+                         bind @disabled to (#upper-form@yz-state is not 'closed')
+                         "
                     >
                       Reopen Upper
                     </button>
                     <button
-                      disabled
                       hidden
                       type="button"
-                      _="
-                      on click send yz:cancel to <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reopen from <#upper-form/> remove @disabled from me remove @hidden from me
-                      on yz:submit from <#upper-form/> add @disabled to me add @hidden to me
-                      on yz:reset add @disabled to me add @hidden to me
-                      "
+                      yz-action="cancel"
+                      _="on click send yz:cancel to closest <form/> end
+                         bind @hidden to (#upper-form@yz-state is not 'editing')
+                         bind @disabled to (#upper-form@yz-state is not 'editing')
+                         "
                     >
                       Cancel
                     </button>
@@ -239,19 +311,422 @@
               </tfoot>
             </table>
           </form>
-          <div class="section-total">
-            <span>Upper Total</span>
-            <output
-              id="upper-total"
-              for="aces twos threes fours fives sixes"
-              _="
-              on yz:submit(total)
-                set my value to total
+          <div class="section-totals">
+            <div class="section-total">
+              <span>Subtotal</span>
+              <output
+                id="upper-subtotal"
+                for="aces twos threes fours fives sixes"
+                _="
+                on yz:submit(subtotal)
+                  set my value to subtotal
+                end
+                on yz:clear from <#upper-form/>
+                  set my value to '—'
+                end
+                "
+                >—</output
+              >
+            </div>
+            <div class="section-total">
+              <span>Bonus (+35 if subtotal ≥ 63)</span>
+              <output
+                id="upper-bonus"
+                for="upper-subtotal"
+                _="
+                on yz:submit(subtotal)
+                  if subtotal >= 63
+                    set my value to '✓'
+                    add .earned to me
+                  else
+                    set my value to '—'
+                    remove .earned from me
+                  end
+                end
+                on yz:clear from <#upper-form/>
+                  set my value to '—'
+                  remove .earned from me
+                end
+                "
+                >—</output
+              >
+            </div>
+            <div class="section-total">
+              <span>Upper Total</span>
+              <output
+                id="upper-total"
+                for="upper-subtotal upper-bonus"
+                _="
+                on yz:submit(subtotal)
+                  set bonus to 0
+                  if subtotal >= 63 set bonus to 35 end
+                  set my value to subtotal + bonus
+                  put (subtotal + bonus) into <#grand-total/>@yz-upper-subtotal
+                  send yz:totaled to <#grand-total/>
+                end
+                on yz:clear from <#upper-form/>
+                  set my value to '—'
+                  remove @yz-upper-subtotal from <#grand-total/>
+                  send yz:totaled to <#grand-total/>
+                end
+                "
+                >—</output
+              >
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="lower-caption">
+          <form
+            id="lower-form"
+            _="
+            init set @yz-state to 'open' on me end
+
+            on yz:submit
+
+              for input in <[yz-scoreable]/> in me
+                set input.value to ((its value or 0) as Int)
               end
-              on yz:reset set my value to '—'
-              "
-              >—</output
-            >
+              if not my.reportValidity() exit end
+
+              set subtotal to 0
+              for input in <[yz-scoreable]/> in me
+                set val to input.value as Int
+                set subtotal to subtotal + val
+                set out to the next <output/> from input
+                set out.value to val
+              end
+              send yz:submit(subtotal: subtotal) to <#lower-total/>
+              set @yz-state to 'closed' on me
+            end
+
+            on yz:reopen
+              for input in <[yz-scoreable]/> in me
+                set out to the next <output/> from input
+                set input.value to (out.value or 0) as Int
+              end
+              set @yz-state to 'editing' on me
+            end
+            on yz:cancel
+              set @yz-state to 'closed' on me
+            end
+
+            on yz:clear
+              my.reset()
+              for input in <[yz-scoreable]/> in me
+                set out to the next <output/> from input
+                set out.value to ''
+              end
+              set @yz-state to 'open' on me
+            end
+            "
+          >
+            <table>
+              <caption
+                id="lower-caption"
+                _="
+                bind state to #lower-form@yz-state
+                  set my textContent to 'Lower Section (' + state + ')'
+                end
+                  "
+              ></caption>
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">How to Score</th>
+                  <th scope="col" abbr="Score">Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">
+                    <label for="three-of-a-kind">Three of a Kind</label>
+                  </th>
+                  <td>Sum all dice (3+ same)</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="three-of-a-kind"
+                      name="three-of-a-kind"
+                      yz-scoreable
+                      required
+                      min="0"
+                      max="30"
+                      step="1"
+                      inputmode="numeric"
+                      placeholder="—"
+                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                    />
+                    <output
+                      for="three-of-a-kind"
+                      hidden
+                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      >—</output
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <label for="four-of-a-kind">Four of a Kind</label>
+                  </th>
+                  <td>Sum all dice (4+ same)</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="four-of-a-kind"
+                      name="four-of-a-kind"
+                      yz-scoreable
+                      required
+                      min="0"
+                      max="30"
+                      step="1"
+                      inputmode="numeric"
+                      placeholder="—"
+                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                    />
+                    <output
+                      for="four-of-a-kind"
+                      hidden
+                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      >—</output
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <label for="full-house">Full House</label>
+                  </th>
+                  <td>
+                    <span class="pts">25 pts</span>
+                    <span class="note">(3+2 match)</span>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      id="full-house"
+                      name="full-house"
+                      yz-scoreable
+                      required
+                      min="0"
+                      max="25"
+                      step="25"
+                      inputmode="numeric"
+                      placeholder="—"
+                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                    />
+                    <output
+                      for="full-house"
+                      hidden
+                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      >—</output
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <label for="sm-straight">Small Straight</label>
+                  </th>
+                  <td>
+                    <span class="pts">30 pts</span>
+                    <span class="note">(4 consecutive)</span>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      id="sm-straight"
+                      name="sm-straight"
+                      yz-scoreable
+                      required
+                      min="0"
+                      max="30"
+                      step="30"
+                      inputmode="numeric"
+                      placeholder="—"
+                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                    />
+                    <output
+                      for="sm-straight"
+                      hidden
+                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      >—</output
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <label for="lg-straight">Large Straight</label>
+                  </th>
+                  <td>
+                    <span class="pts">40 pts</span>
+                    <span class="note">(5 consecutive)</span>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      id="lg-straight"
+                      name="lg-straight"
+                      yz-scoreable
+                      required
+                      min="0"
+                      max="40"
+                      step="40"
+                      inputmode="numeric"
+                      placeholder="—"
+                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                    />
+                    <output
+                      for="lg-straight"
+                      hidden
+                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      >—</output
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><label for="yahtzee">Yahtzee</label></th>
+                  <td>
+                    <span class="pts">50 pts</span>
+                    <span class="note">(all 5 same)</span>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      id="yahtzee"
+                      name="yahtzee"
+                      yz-scoreable
+                      required
+                      min="0"
+                      max="50"
+                      step="50"
+                      inputmode="numeric"
+                      placeholder="—"
+                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                    />
+                    <output
+                      for="yahtzee"
+                      hidden
+                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      >—</output
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <label for="yahtzee-bonus">Bonus Yahtzees</label>
+                  </th>
+                  <td>
+                    <span class="pts">100 pts</span>
+                    <span class="note">each</span>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      id="yahtzee-bonus"
+                      name="yahtzee-bonus"
+                      yz-scoreable
+                      required
+                      min="0"
+                      max="400"
+                      step="100"
+                      inputmode="numeric"
+                      placeholder="—"
+                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                    />
+                    <output
+                      for="yahtzee-bonus"
+                      hidden
+                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      >—</output
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><label for="chance">Chance</label></th>
+                  <td>Sum of all dice</td>
+                  <td>
+                    <input
+                      type="number"
+                      id="chance"
+                      name="chance"
+                      yz-scoreable
+                      required
+                      min="0"
+                      max="30"
+                      step="1"
+                      inputmode="numeric"
+                      placeholder="—"
+                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                    />
+                    <output
+                      for="chance"
+                      hidden
+                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      >—</output
+                    >
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3">
+                    <button
+                      type="button"
+                      yz-action="close"
+                      _="on click send yz:submit to closest <form/> end
+                         bind @hidden to (#lower-form@yz-state is 'closed')
+                         bind @disabled to (#lower-form@yz-state is 'closed')
+                         "
+                    >
+                      Close Lower
+                    </button>
+                    <button
+                      hidden
+                      type="button"
+                      yz-action="reopen"
+                      _="on click send yz:reopen to closest <form/> end
+                         bind @hidden to (#lower-form@yz-state is not 'closed')
+                         bind @disabled to (#lower-form@yz-state is not 'closed')
+                         "
+                    >
+                      Reopen Lower
+                    </button>
+                    <button
+                      hidden
+                      type="button"
+                      yz-action="cancel"
+                      _="on click send yz:cancel to closest <form/> end
+                         bind @hidden to (#lower-form@yz-state is not 'editing')
+                         bind @disabled to (#lower-form@yz-state is not 'editing')
+                         "
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </form>
+          <div class="section-totals">
+            <div class="section-total">
+              <span>Lower Total</span>
+              <output
+                id="lower-total"
+                for="three-of-a-kind four-of-a-kind full-house sm-straight lg-straight yahtzee yahtzee-bonus chance"
+                _="
+                on yz:submit(subtotal)
+                  set my value to subtotal
+                  put subtotal into <#grand-total/>@yz-lower-subtotal
+                  send yz:totaled to <#grand-total/>
+                end
+                on yz:clear from <#lower-form/>
+                  set my value to '—'
+                  remove @yz-lower-subtotal from <#grand-total/>
+                  send yz:totaled to <#grand-total/>
+                end
+                "
+                >—</output
+              >
+            </div>
           </div>
         </section>
       </div>
@@ -261,12 +736,18 @@
           <label for="grand-total">Grand Total</label>
           <output
             id="grand-total"
-            for="upper-total"
+            for="upper-total lower-total"
             _="
-            on yz:submit(total)
-              set my value to total
+            on yz:totaled
+              set bothPopulated to (my @yz-upper-subtotal and my @yz-lower-subtotal)
+              if bothPopulated
+                set upper to my @yz-upper-subtotal
+                set lower to my @yz-lower-subtotal
+                set my value to (upper as Int + lower as Int)
+              else
+                set my value to '—'
+              end
             end
-            on yz:reset set my value to '—'
             "
             >—</output
           >
@@ -275,7 +756,7 @@
           type="button"
           class="new-game-btn"
           aria-label="Start a new game and clear all scores"
-          _="on click if confirm('Start a new game? All scores will be cleared.') send yz:reset to <form, button, output/>"
+          _="on click if confirm('Start a new game? All scores will be cleared.') send yz:clear to <form/>"
         >
           New Game
         </button>
