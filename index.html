@@ -49,70 +49,57 @@
             id="upper-form"
             _="
             init set @yz-state to 'open' on me end
+
             on yz:submit
+            
               for input in <[yz-scoreable]/> in me
                 set input.value to ((its value or 0) as Int)
               end
               if not my.reportValidity() exit end
+
               set subtotal to 0
               for input in <[yz-scoreable]/> in me
                 set val to input.value as Int
                 set subtotal to subtotal + val
                 set out to the next <output/> from input
                 set out.value to val
-                add @hidden to input
-                remove @hidden from out
               end
-              set bonusOut to <output[for='upper-bonus']/> in me
-              set bonus to 0
-              if subtotal >= 63
-                set bonusOut.value to '✓'
-                add .earned to bonusOut
-                set bonus to 35
-              else
-                set bonusOut.value to '—'
-                remove .earned from bonusOut
-              end
-              send yz:submit(total: subtotal) to <#upper-total/>
-              send yz:submit(total: subtotal + bonus) to <#grand-total/>
+              send yz:submit(subtotal: subtotal) to <#upper-subtotal/>
+              send yz:submit(subtotal: subtotal) to <#upper-bonus/>
+              send yz:submit(subtotal: subtotal) to <#upper-total/>
               set @yz-state to 'closed' on me
             end
+
             on yz:reopen
               for input in <[yz-scoreable]/> in me
                 set out to the next <output/> from input
                 set input.value to (out.value or 0) as Int
-                remove @hidden from input
-                add @hidden to out
               end
               set @yz-state to 'editing' on me
             end
             on yz:cancel
-              for input in <[yz-scoreable]/> in me
-                set out to the next <output/> from input
-                add @hidden to input
-                remove @hidden from out
-              end
               set @yz-state to 'closed' on me
             end
+
             on yz:clear
               my.reset()
               for input in <[yz-scoreable]/> in me
                 set out to the next <output/> from input
-                remove @hidden from input
-                add @hidden to out
                 set out.value to ''
               end
-              set bonusOut to <output[for='upper-bonus']/> in me
-              set bonusOut.value to '—'
-              remove .earned from bonusOut
               set @yz-state to 'open' on me
             end
             "
           >
             <table>
-              <caption id="upper-caption">
-                Upper Section
-              </caption>
+              <caption
+                id="upper-caption"
+                _="
+                bind state to #upper-form@yz-state
+                  set my textContent to 'Upper Section (' + state + ')'
+                end
+                  "
+              ></caption>
               <thead>
                 <tr>
                   <th scope="col">Category</th>
@@ -138,8 +125,14 @@
                       step="1"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="aces" hidden>—</output>
+                    <output
+                      for="aces"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
@@ -159,8 +152,14 @@
                       step="2"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="twos" hidden>—</output>
+                    <output
+                      for="twos"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
@@ -180,8 +179,14 @@
                       step="3"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="threes" hidden>—</output>
+                    <output
+                      for="threes"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
@@ -201,8 +206,14 @@
                       step="4"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="fours" hidden>—</output>
+                    <output
+                      for="fours"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
@@ -222,8 +233,14 @@
                       step="5"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="fives" hidden>—</output>
+                    <output
+                      for="fives"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
                 <tr>
@@ -243,15 +260,14 @@
                       step="6"
                       inputmode="numeric"
                       placeholder="—"
+                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
                     />
-                    <output for="sixes" hidden>—</output>
-                  </td>
-                </tr>
-                <tr class="row-bonus">
-                  <th scope="row">Bonus</th>
-                  <td>+35 if upper score ≥ 63</td>
-                  <td>
-                    <output for="upper-bonus">—</output>
+                    <output
+                      for="sixes"
+                      hidden
+                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      >—</output
+                    >
                   </td>
                 </tr>
               </tbody>
@@ -261,33 +277,31 @@
                     <button
                       type="button"
                       yz-action="close"
-                      _="on click send yz:submit to closest <form/>
+                      _="on click send yz:submit to closest <form/> end
                          bind @hidden to (#upper-form@yz-state is 'closed')
-                         bind @disabled to @hidden
+                         bind @disabled to (#upper-form@yz-state is 'closed')
                          "
                     >
                       Close Upper
                     </button>
                     <button
-                      disabled
                       hidden
                       type="button"
                       yz-action="reopen"
-                      _="on click send yz:reopen to closest <form/>
+                      _="on click send yz:reopen to closest <form/> end
                          bind @hidden to (#upper-form@yz-state is not 'closed')
-                         bind @disabled to @hidden
+                         bind @disabled to (#upper-form@yz-state is not 'closed')
                          "
                     >
                       Reopen Upper
                     </button>
                     <button
-                      disabled
                       hidden
                       type="button"
                       yz-action="cancel"
-                      _="on click send yz:cancel to closest <form/>
-                         bind @hidden to #upper-form@yz-state is not 'editing'
-                         bind @disabled to @hidden
+                      _="on click send yz:cancel to closest <form/> end
+                         bind @hidden to (#upper-form@yz-state is not 'editing')
+                         bind @disabled to (#upper-form@yz-state is not 'editing')
                          "
                     >
                       Cancel
@@ -297,19 +311,64 @@
               </tfoot>
             </table>
           </form>
-          <div class="section-total">
-            <span>Upper Total</span>
-            <output
-              id="upper-total"
-              for="aces twos threes fours fives sixes"
-              _="
-              on yz:submit(total)
-                set my value to total
-              end
-              on yz:clear from <#upper-form/> set my value to '—'
-              "
-              >—</output
-            >
+          <div class="section-totals">
+            <div class="section-total">
+              <span>Subtotal</span>
+              <output
+                id="upper-subtotal"
+                for="aces twos threes fours fives sixes"
+                _="
+                on yz:submit(subtotal)
+                  set my value to subtotal
+                end
+                on yz:clear from <#upper-form/>
+                  set my value to '—'
+                end
+                "
+                >—</output
+              >
+            </div>
+            <div class="section-total">
+              <span>Bonus (+35 if subtotal ≥ 63)</span>
+              <output
+                id="upper-bonus"
+                for="upper-subtotal"
+                _="
+                on yz:submit(subtotal)
+                  if subtotal >= 63
+                    set my value to '✓'
+                    add .earned to me
+                  else
+                    set my value to '—'
+                    remove .earned from me
+                  end
+                end
+                on yz:clear from <#upper-form/>
+                  set my value to '—'
+                  remove .earned from me
+                end
+                "
+                >—</output
+              >
+            </div>
+            <div class="section-total">
+              <span>Upper Total</span>
+              <output
+                id="upper-total"
+                for="upper-subtotal upper-bonus"
+                _="
+                on yz:submit(subtotal)
+                  set bonus to 0
+                  if subtotal >= 63 set bonus to 35 end
+                  set my value to subtotal + bonus
+                end
+                on yz:clear from <#upper-form/>
+                  set my value to '—'
+                end
+                "
+                >—</output
+              >
+            </div>
           </div>
         </section>
       </div>
