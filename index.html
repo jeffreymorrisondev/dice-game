@@ -76,6 +76,7 @@
                 set input.value to (out.value or 0) as Int
               end
               set @yz-state to 'editing' on me
+              focus the first <[yz-scoreable]/> in me
             end
             on yz:cancel
               set @yz-state to 'closed' on me
@@ -126,12 +127,26 @@
                       step="1"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                        focus me
+                      end
+
+                        "
                     />
                     <output
                       for="aces"
                       hidden
-                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -153,12 +168,24 @@
                       step="2"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="twos"
                       hidden
-                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -180,12 +207,24 @@
                       step="3"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="threes"
                       hidden
-                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -207,12 +246,24 @@
                       step="4"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="fours"
                       hidden
-                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -234,12 +285,24 @@
                       step="5"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="fives"
                       hidden
-                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -261,12 +324,24 @@
                       step="6"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#upper-form@yz-state is 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="sixes"
                       hidden
-                      _="bind @hidden to (#upper-form@yz-state is not 'closed')"
+                      _="live
+                      if (#upper-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -279,8 +354,14 @@
                       type="button"
                       yz-action="close"
                       _="on click send yz:submit to closest <form/> end
-                         bind @hidden to (#upper-form@yz-state is 'closed')
-                         bind @disabled to (#upper-form@yz-state is 'closed')
+                         live
+                         if (#upper-form@yz-state is 'closed')
+                           add @hidden to me
+                           add @disabled to me
+                         else
+                           remove @hidden from me
+                           remove @disabled from me
+                         end
                          "
                     >
                       Close Upper
@@ -289,9 +370,15 @@
                       hidden
                       type="button"
                       yz-action="reopen"
-                      _="on click send yz:reopen to closest <form/> then focus #aces end
-                         bind @hidden to (#upper-form@yz-state is not 'closed')
-                         bind @disabled to (#upper-form@yz-state is not 'closed')
+                      _="on click send yz:reopen to closest <form/> end
+                         live
+                         if (#upper-form@yz-state is not 'closed')
+                           add @hidden to me
+                           add @disabled to me
+                         else
+                           remove @hidden from me
+                           remove @disabled from me
+                         end
                          "
                     >
                       Reopen Upper
@@ -301,8 +388,14 @@
                       type="button"
                       yz-action="cancel"
                       _="on click send yz:cancel to closest <form/> end
-                         bind @hidden to (#upper-form@yz-state is not 'editing')
-                         bind @disabled to (#upper-form@yz-state is not 'editing')
+                         live
+                         if (#upper-form@yz-state is not 'editing')
+                           add @hidden to me
+                           add @disabled to me
+                         else
+                           remove @hidden from me
+                           remove @disabled from me
+                         end
                          "
                     >
                       Cancel
@@ -456,12 +549,25 @@
                       step="1"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                        focus me
+                      end
+                        "
                     />
                     <output
                       for="three-of-a-kind"
                       hidden
-                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -483,12 +589,24 @@
                       step="1"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="four-of-a-kind"
                       hidden
-                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -513,12 +631,24 @@
                       step="25"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="full-house"
                       hidden
-                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -543,12 +673,24 @@
                       step="30"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="sm-straight"
                       hidden
-                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -573,12 +715,24 @@
                       step="40"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="lg-straight"
                       hidden
-                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -601,12 +755,24 @@
                       step="50"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="yahtzee"
                       hidden
-                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -631,12 +797,24 @@
                       step="100"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="yahtzee-bonus"
                       hidden
-                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -656,12 +834,24 @@
                       step="1"
                       inputmode="numeric"
                       placeholder="—"
-                      _="bind @hidden to (#lower-form@yz-state is 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                     />
                     <output
                       for="chance"
                       hidden
-                      _="bind @hidden to (#lower-form@yz-state is not 'closed')"
+                      _="live
+                      if (#lower-form@yz-state is not 'closed')
+                        add @hidden to me
+                      else
+                        remove @hidden from me
+                      end
+                        "
                       >—</output
                     >
                   </td>
@@ -674,8 +864,14 @@
                       type="button"
                       yz-action="close"
                       _="on click send yz:submit to closest <form/> end
-                         bind @hidden to (#lower-form@yz-state is 'closed')
-                         bind @disabled to (#lower-form@yz-state is 'closed')
+                         live
+                         if (#lower-form@yz-state is 'closed')
+                           add @hidden to me
+                           add @disabled to me
+                         else
+                           remove @hidden from me
+                           remove @disabled from me
+                         end
                          "
                     >
                       Close Lower
@@ -684,9 +880,15 @@
                       hidden
                       type="button"
                       yz-action="reopen"
-                      _="on click send yz:reopen to closest <form/> then focus #three-of-a-kind end
-                         bind @hidden to (#lower-form@yz-state is not 'closed')
-                         bind @disabled to (#lower-form@yz-state is not 'closed')
+                      _="on click send yz:reopen to closest <form/> end
+                         live
+                         if (#lower-form@yz-state is not 'closed')
+                           add @hidden to me
+                           add @disabled to me
+                         else
+                           remove @hidden from me
+                           remove @disabled from me
+                         end
                          "
                     >
                       Reopen Lower
@@ -696,8 +898,14 @@
                       type="button"
                       yz-action="cancel"
                       _="on click send yz:cancel to closest <form/> end
-                         bind @hidden to (#lower-form@yz-state is not 'editing')
-                         bind @disabled to (#lower-form@yz-state is not 'editing')
+                         live
+                         if (#lower-form@yz-state is not 'editing')
+                           add @hidden to me
+                           add @disabled to me
+                         else
+                           remove @hidden from me
+                           remove @disabled from me
+                         end
                          "
                     >
                       Cancel
