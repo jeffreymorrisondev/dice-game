@@ -51,12 +51,7 @@
             init set @yz-state to 'open' on me end
 
             on yz:submit
-            
-              for input in <[yz-scoreable]/> in me
-                set input.value to ((its value or 0) as Int)
-              end
               if not my.reportValidity() exit end
-
               set subtotal to 0
               for input in <[yz-scoreable]/> in me
                 set val to input.value as Int
@@ -354,15 +349,15 @@
                       type="button"
                       yz-action="close"
                       _="on click send yz:submit to closest <form/> end
-                         live
-                         if (#upper-form@yz-state is 'closed')
-                           add @hidden to me
-                           add @disabled to me
-                         else
-                           remove @hidden from me
-                           remove @disabled from me
-                         end
-                         "
+                        live
+                        if (#upper-form@yz-state is 'closed')
+                          add @hidden to me
+                          add @disabled to me
+                        else
+                          remove @hidden from me
+                          remove @disabled from me
+                        end
+                        "
                     >
                       Close Upper
                     </button>
@@ -371,15 +366,15 @@
                       type="button"
                       yz-action="reopen"
                       _="on click send yz:reopen to closest <form/> end
-                         live
-                         if (#upper-form@yz-state is not 'closed')
-                           add @hidden to me
-                           add @disabled to me
-                         else
-                           remove @hidden from me
-                           remove @disabled from me
-                         end
-                         "
+                        live
+                        if (#upper-form@yz-state is not 'closed')
+                          add @hidden to me
+                          add @disabled to me
+                        else
+                          remove @hidden from me
+                          remove @disabled from me
+                        end
+                        "
                     >
                       Reopen Upper
                     </button>
@@ -388,15 +383,15 @@
                       type="button"
                       yz-action="cancel"
                       _="on click send yz:cancel to closest <form/> end
-                         live
-                         if (#upper-form@yz-state is not 'editing')
-                           add @hidden to me
-                           add @disabled to me
-                         else
-                           remove @hidden from me
-                           remove @disabled from me
-                         end
-                         "
+                        live
+                        if (#upper-form@yz-state is not 'editing')
+                          add @hidden to me
+                          add @disabled to me
+                        else
+                          remove @hidden from me
+                          remove @disabled from me
+                        end
+                        "
                     >
                       Cancel
                     </button>
@@ -477,12 +472,7 @@
             init set @yz-state to 'open' on me end
 
             on yz:submit
-
-              for input in <[yz-scoreable]/> in me
-                set input.value to ((its value or 0) as Int)
-              end
               if not my.reportValidity() exit end
-
               set subtotal to 0
               for input in <[yz-scoreable]/> in me
                 set val to input.value as Int
@@ -864,15 +854,15 @@
                       type="button"
                       yz-action="close"
                       _="on click send yz:submit to closest <form/> end
-                         live
-                         if (#lower-form@yz-state is 'closed')
-                           add @hidden to me
-                           add @disabled to me
-                         else
-                           remove @hidden from me
-                           remove @disabled from me
-                         end
-                         "
+                        live
+                        if (#lower-form@yz-state is 'closed')
+                          add @hidden to me
+                          add @disabled to me
+                        else
+                          remove @hidden from me
+                          remove @disabled from me
+                        end
+                        "
                     >
                       Close Lower
                     </button>
@@ -881,15 +871,15 @@
                       type="button"
                       yz-action="reopen"
                       _="on click send yz:reopen to closest <form/> end
-                         live
-                         if (#lower-form@yz-state is not 'closed')
-                           add @hidden to me
-                           add @disabled to me
-                         else
-                           remove @hidden from me
-                           remove @disabled from me
-                         end
-                         "
+                        live
+                        if (#lower-form@yz-state is not 'closed')
+                          add @hidden to me
+                          add @disabled to me
+                        else
+                          remove @hidden from me
+                          remove @disabled from me
+                        end
+                        "
                     >
                       Reopen Lower
                     </button>
@@ -898,15 +888,15 @@
                       type="button"
                       yz-action="cancel"
                       _="on click send yz:cancel to closest <form/> end
-                         live
-                         if (#lower-form@yz-state is not 'editing')
-                           add @hidden to me
-                           add @disabled to me
-                         else
-                           remove @hidden from me
-                           remove @disabled from me
-                         end
-                         "
+                        live
+                        if (#lower-form@yz-state is not 'editing')
+                          add @hidden to me
+                          add @disabled to me
+                        else
+                          remove @hidden from me
+                          remove @disabled from me
+                        end
+                        "
                     >
                       Cancel
                     </button>
